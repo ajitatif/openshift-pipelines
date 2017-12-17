@@ -38,11 +38,6 @@ node {
         echo "Application deployed..."
     }
 
-    stage('Deploy Verify') {
-        openshiftVerifyDeployment apiURL: '', authToken: '', depCfg: 'openshift-pipelines-backend', namespace: 'myproject', replicaCount: '1', verbose: 'true', verifyReplicaCount: 'true', waitTime: '1', waitUnit: 'min'
-        echo "Deploy was verified..."
-    }
-
 }
 
 def imagePrune(containerName){
