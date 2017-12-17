@@ -34,12 +34,12 @@ node {
     }
 
     stage('Deploy') {
-        openshiftDeploy apiURL: '', authToken: '', depCfg: 'openshift-pipelines-backend', namespace: 'demo', verbose: 'true', waitTime: '1', waitUnit: 'min'
+        openshiftDeploy apiURL: '', authToken: '', depCfg: 'openshift-pipelines-backend', namespace: 'myproject', verbose: 'true', waitTime: '1', waitUnit: 'min'
         echo "Application deployed..."
     }
 
     stage('Deploy Verify') {
-        openshiftVerifyDeployment apiURL: '', authToken: '', depCfg: 'openshift-pipelines-backend', namespace: 'demo', replicaCount: '1', verbose: 'true', verifyReplicaCount: 'true', waitTime: '1', waitUnit: 'min'
+        openshiftVerifyDeployment apiURL: '', authToken: '', depCfg: 'openshift-pipelines-backend', namespace: 'myproject', replicaCount: '1', verbose: 'true', verifyReplicaCount: 'true', waitTime: '1', waitUnit: 'min'
         echo "Deploy was verified..."
     }
 
