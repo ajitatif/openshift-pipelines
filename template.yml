@@ -1,0 +1,81 @@
+kind: Template
+apiVersion: v1
+objects:
+  - kind: "BuildConfig"
+    apiVersion: "v1"
+    metadata:
+      name: "openshift-pipelines-tutorial"
+    spec:
+      successfulBuildsHistoryLimit: 2
+      failedBuildsHistoryLimit: 2
+      resources:
+        limits:
+          cpu: "1"
+          memory: "1024m"
+      source:
+        type: "Git"
+        git:
+          uri: ${SOURCE_REPOSITORY_URL}
+          ref: "master"
+      strategy:
+        jenkinsPipelineStrategy:
+          jenkinsfilePath: Jenkinsfile
+  - kind: DeploymentConfig
+    apiVersion: v1
+    metadata:
+      name: openshift-pipelines-backend
+    spec:
+      template:
+        metadata:
+          labels:
+            name: "jenkins-selector"
+        spec:
+          containers:
+            - name: "openshift-pipelines-backend-service"
+              image: "docker.io/hakdogan/openshift-pipelines:latest"
+              ports:
+                - containerPort: 8080
+                  protocol: "TCP"
+    replicas: "${{REPLICA_COUNT}}"
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: "openshift-pipelines-service"
+      annotations:
+        description: "Exposes the application pod"
+    spec:
+      ports:
+        - name: "from-docker-source"
+          port: 8080
+          targetPort: 8080
+          protocol: "TCP"
+      sessionAffinity: None
+      type: ClusterIP
+      selector:
+        name: "jenkins-selector"
+    status:
+      loadBalancer: {}
+  - kind: Route
+    apiVersion: v1
+    metadata:
+      name: openshift-pipelines-router-jenkins
+    spec:
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+      to:
+        kind: Service
+        name: openshift-pipelines-service
+parameters:
+  - name: SOURCE_REPOSITORY_URL
+    displayName: Source Repository URL
+    description: The URL of the hello project
+    value: https://github.com/hakdogan/openshift-pipelines.git
+    required: true
+  - name: REPLICA_COUNT
+    description: Number of replicas to run
+    value: "1"
+    required: true
+message: "OPENSHIFT PIPELINES TUTORIAL"
+metadata:
+  name: "openshift-pipelines-tutorial"
