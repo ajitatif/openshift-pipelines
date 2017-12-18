@@ -2,6 +2,7 @@ def CONTAINER_NAME="openshift-pipelines"
 def CONTAINER_TAG="latest"
 def DOCKER_HUB_USER="hakdogan"
 def HTTP_PORT="8080"
+def PROJECT=""
 
 node {
 
@@ -33,11 +34,20 @@ node {
         }
     }
 
-    stage('Deploy') {
-        openshiftDeploy apiURL: '', authToken: '', depCfg: 'openshift-pipelines-backend', namespace: 'myproject', verbose: 'true', waitTime: '1', waitUnit: 'min'
-        echo "Application deployed..."
+    stage("Build WAR") {
+        sh "mvn clean package -Popenshift"
+        stash name:"war", includes:"target/openshift-pipelines.war"
     }
 
+    stage("Build Image") {
+        unstash name:"war"
+        sh "oc start-build ${CONTAINER_NAME}-docker --from-file=target/openshift-pipelines.war -n ${PROJECT}"
+        openshiftVerifyBuild bldCfg: "${CONTAINER_NAME}-docker", namespace: PROJECT, waitTime: '20', waitUnit: 'min'
+    }
+
+    stage("Deploy") {
+        openshiftDeploy deploymentConfig: CONTAINER_NAME, namespace: PROJECT
+    }
 }
 
 def imagePrune(containerName){
