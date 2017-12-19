@@ -32,11 +32,11 @@ node {
     }
 
     stage('Deploy') {
-        openshiftDeploy apiURL: '', authToken: '', depCfg: 'openshift-pipelines-backend-from-jenkins', namespace: 'myproject', verbose: 'true', waitTime: '1', waitUnit: 'min'
+        openshiftDeploy apiURL: '', authToken: '', depCfg: 'openshift-pipelines-backend-from-jenkins', namespace: 'myproject', verbose: 'true', waitTime: '20', waitUnit: 'min'
     }
 
     stage('Deploy Verify') {
-        openshiftVerifyDeployment apiURL: '', authToken: '', depCfg: 'openshift-pipelines-backend-from-jenkins', namespace: 'myproject', replicaCount: '1', verbose: 'true', verifyReplicaCount: 'true', waitTime: '1', waitUnit: 'min'
+        openshiftVerifyDeployment apiURL: '', authToken: '', depCfg: 'openshift-pipelines-backend-from-jenkins', namespace: 'myproject', replicaCount: '1', verbose: 'true', verifyReplicaCount: 'true', waitTime: '20', waitUnit: 'min'
     }
 
 }
