@@ -16,7 +16,7 @@ objects:
         type: "Git"
         git:
           uri: ${SOURCE_REPOSITORY_URL}
-          ref: "http"
+          ref: "master"
       strategy:
         jenkinsPipelineStrategy:
           jenkinsfilePath: Jenkinsfile
@@ -90,7 +90,7 @@ parameters:
   - name: SOURCE_REPOSITORY_URL
     displayName: Source Repository URL
     description: The URL of the openshift-pipelines project
-    value: https://github.com/ozlerhakan/hello.git
+    value: https://github.com/hakdogan/openshift-pipelines.git
     required: true
   - name: REPLICA_COUNT
     description: Number of replicas to run
